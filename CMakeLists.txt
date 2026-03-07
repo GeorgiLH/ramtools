@@ -43,6 +43,7 @@ ROOT_STANDARD_LIBRARY_PACKAGE(ramcore
         inc/ramcore/SamToTTree.h
         inc/ramcore/SamToNTuple.h
         inc/ramcore/RAMNTupleView.h
+        inc/ramcore/RDF_RAMNTupleView.h
     SOURCES
         src/ttree/RAMRecord.cxx
         src/rntuple/RAMNTupleRecord.cxx
@@ -50,6 +51,7 @@ ROOT_STANDARD_LIBRARY_PACKAGE(ramcore
         src/ramcore/SamToTTree.cxx
         src/ramcore/SamToNTuple.cxx
         src/ramcore/RAMNTupleView.cxx
+        src/ramcore/RDF_RAMNTupleView.cxx
     LINKDEF
         inc/ttree/LinkDef.h
     DEPENDENCIES
@@ -83,7 +85,7 @@ endif()
 if(RAMTOOLS_BUILD_TESTS)
     enable_testing()
     add_subdirectory(test)
-    
+
     if(ENABLE_COVERAGE)
         add_custom_target(coverage
             COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
