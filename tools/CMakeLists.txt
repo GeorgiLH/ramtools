@@ -21,14 +21,7 @@ ROOT_EXECUTABLE(ramntupleview
         ROOT::Core
         ROOT::ROOTNTuple
 )
-ROOT_EXECUTABLE(rdf_ramntupleview
-    rdf_ramntupleview.cxx
-    LIBRARIES
-        ramcore
-        ROOT::Core
-        ROOT::ROOTNTuple
-)
-install(TARGETS samtoram samtoramntuple ramntupleview rdf_ramntupleview
+install(TARGETS samtoram samtoramntuple ramntupleview
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
