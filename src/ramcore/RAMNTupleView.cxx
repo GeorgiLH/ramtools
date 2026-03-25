@@ -39,9 +39,7 @@ Long64_t ramntupleview(const char *file, const char *query, bool cache, bool per
    auto index = RAMNTupleRecord::GetIndex();
 
    auto recordView = reader->GetView<RAMNTupleRecord>("record");
-
    Long64_t count = 0;
-
    if (!index || index->Size() == 0) {
 
       for (auto i : reader->GetEntryRange()) {
