@@ -24,7 +24,7 @@ jobs:
     - name: Install build dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libvdt-dev libtbb-dev
+        sudo apt-get install -y libvdt-dev libtbb-dev libhts-dev
     
     - name: Configure CMake
       run: |
@@ -67,7 +67,7 @@ jobs:
     - name: Install build and coverage dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libvdt-dev libtbb-dev gcovr lcov
+        sudo apt-get install -y libvdt-dev libtbb-dev gcovr lcov libhts-dev
         
     - name: Configure with coverage
       run: |
@@ -96,12 +96,17 @@ jobs:
     - name: Generate coverage report
       run: |
         cd build
-        gcovr -r .. --xml-pretty --xml coverage.xml --print-summary
+        gcovr -r .. \
+          --xml-pretty --xml coverage.xml \
+          --exclude '../test/' \
+          --exclude '../benchmark/' \
+          --print-summary
         
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       with:
         files: ./build/coverage.xml
         flags: unittests
         name: codecov-ramtools
-        fail_ci_if_error: false
+        fail_ci_if_error: true
+        token: ${{ secrets.CODECOV_TOKEN }}
