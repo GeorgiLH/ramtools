@@ -221,8 +221,8 @@ ULong64_t mt_ramntupleview(const int numthreads, const char *file, const char *q
    }
    ROOT::EnableImplicitMT(numthreads);
    auto ram = ROOT::RDF::FromRNTuple("RAM", file);
-   auto filterfunc = [refid, start, end](int32_t refidentry, int32_t pos) {
-      return (refid == refidentry) && (pos >= start) && (pos <= end);
+   auto filterfunc = [refid, start, end](int32_t refidentry, int32_t pos, uint16_t entry_flag) {
+      return !(entry_flag & FLAG_FILTER) && (refid == refidentry) && (pos >= start) && (pos <= end);
    };
 
    auto filtered = ram.Filter(filterfunc, {"record.refid", "record.pos"});
