@@ -24,7 +24,7 @@
 #include "ramcore/SamToTTree.h"
 namespace {
 
-const RAMNTupleViewOpts opts = {true, false, nullptr};
+const RAMNTupleViewOpts opts = {true, false, ""};
 class ramcoreTest : public ::testing::Test {
 protected:
    static constexpr const char *kParserTestFile = "test_sam_parser_validation.sam";

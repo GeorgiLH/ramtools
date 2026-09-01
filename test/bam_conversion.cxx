@@ -20,7 +20,7 @@
 #include <string>
 
 namespace {
-const RAMNTupleViewOpts opts = {true, false, nullptr};
+const RAMNTupleViewOpts opts = {true, false, ""};
 void GenerateBAMFile(const char *bam_path, int num_reads)
 {
    const char *sam_path = "temp_for_bam.sam";
