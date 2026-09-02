@@ -1,10 +1,15 @@
 #include "ramcore/RAMNTupleView.h"
+#include <ROOT/REntry.hxx>
+#include <ROOT/RNTupleModel.hxx>
+#include <ROOT/RNTupleWriteOptions.hxx>
+#include <ROOT/RNTupleWriter.hxx>
 #include <algorithm>
 
 #include <cctype>
 #include <cstddef>
 #include <cstdint>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -114,7 +119,7 @@ bool parseRegion(const std::string &region, TString &rname, Int_t &start, Int_t 
 } // namespace
 
 // NOLINTNEXTLINE(misc-use-internal-linkage)
-Long64_t ramntupleview(const char *file, const char *query, const RAMNTupleViewOpts &)
+Long64_t ramntupleview(const char *file, const char *query, const RAMNTupleViewOpts &viewopts)
 {
    TStopwatch stopwatch;
    stopwatch.Start();
@@ -148,7 +153,18 @@ Long64_t ramntupleview(const char *file, const char *query, const RAMNTupleViewO
    auto refidView = reader->GetView<int32_t>("record.refid");
    auto posView = reader->GetView<int32_t>("record.pos");
    auto cigarView = reader->GetView<std::vector<uint32_t>>("record.cigar");
+   std::unique_ptr<ROOT::RNTupleWriter> writer;
+   std::unique_ptr<ROOT::REntry> entry;
 
+   if (viewopts.fWriteFile) {
+      ROOT::RNTupleWriteOptions opts;
+      opts.SetCompression(505); // hardcoded to the same value used in conversion binaries; may change later
+      opts.SetMaxUnzippedPageSize(64000);
+
+      auto model = RAMNTupleRecord::MakeModel();
+      writer = ROOT::RNTupleWriter::Recreate(std::move(model), "RAM", viewopts.filenameout, opts);
+      entry = writer->GetModel().CreateEntry();
+   }
    auto index = RAMNTupleRecord::GetIndex();
    Long64_t start = (index && index->Size() > 0) ? index->GetRow(refid, rs) : 0;
    if (start < 0)
@@ -174,10 +190,19 @@ Long64_t ramntupleview(const char *file, const char *query, const RAMNTupleViewO
       // Overlap: read_end >= rs (pos <= re guaranteed by break above)
       if (pos >= rs) {
          count++;
+         if (viewopts.fWriteFile) {
+            reader->LoadEntry(i, *entry);
+            writer->Fill(*entry);
+         }
       } else {
          int readEnd = pos + computeRefSpan(cigarView(i)) - 1;
-         if (readEnd >= rs)
+         if (readEnd >= rs) {
             count++;
+            if (viewopts.fWriteFile) {
+               reader->LoadEntry(i, *entry);
+               writer->Fill(*entry);
+            }
+         }
       }
    }
 

@@ -4,6 +4,8 @@
 struct RAMNTupleViewOpts {
    bool fCache = true;
    bool fPerfStats = false;
+   bool fWriteFile = false;
+   std::string filenameout = "a.ram";
    std::string perfStatsFilename = "perf.root";
 };
 Long64_t ramntupleview(const char *file, const char *query = "", const RAMNTupleViewOpts & = RAMNTupleViewOpts());
